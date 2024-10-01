@@ -28,18 +28,9 @@ struct WeightChartView: View {
         lastTenWeights.map { $0.weight }.max() ?? 100
     }
     
-    var firstWeight: Weight? {
-        lastTenWeights.last // Oldest weight
-    }
-    
-    var lastWeight: Weight? {
-        lastTenWeights.first // Latest weight
-    }
-    
     var body: some View {
         VStack {
             weightChart
-            selectedWeightInfo
             weightTitle
         }
         .onAppear {
@@ -87,30 +78,9 @@ struct WeightChartView: View {
                 .lineStyle(StrokeStyle(lineWidth: 2))
                 .foregroundStyle(.blue)
             }
-            
-            if let firstWeight = firstWeight {
-                PointMark(
-                    x: .value("Date", firstWeight.date),
-                    y: .value("Weight", firstWeight.weight)
-                )
-                .symbolSize(50)
-                .foregroundStyle(.red)
-            }
-            
-            if let lastWeight = lastWeight {
-                PointMark(
-                    x: .value("Date", lastWeight.date),
-                    y: .value("Weight", lastWeight.weight)
-                )
-                .symbolSize(50)
-                .foregroundStyle(.green)
-            }
         }
-        .chartYAxis(.hidden)
-        .chartXAxis(.hidden)
         .chartYScale(domain: Double(minWeight - 1)...Double(maxWeight + 1))
         .frame(height: 250)
-        .padding()
         .chartOverlay { proxy in
             GeometryReader { geometry in
                 Rectangle().fill(.clear).contentShape(Rectangle())
@@ -121,16 +91,6 @@ struct WeightChartView: View {
                             }
                     )
             }
-        }
-    }
-    
-    var selectedWeightInfo: some View {
-        if let selectedWeight = selectedWeight {
-            Text("Selected: \(selectedWeight.weight, specifier: "%.2f") kg on \(formattedDate(for: selectedWeight.date))")
-                .padding()
-        } else {
-            Text("Tap on a point to see details")
-                .padding()
         }
     }
     

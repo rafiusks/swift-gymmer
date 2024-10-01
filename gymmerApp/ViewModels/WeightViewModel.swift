@@ -81,7 +81,7 @@ class WeightViewModel: ObservableObject {
 //     Delete a weight entry
     func deleteWeight(weight: Weight) async {
         do {
-            let response = try await client
+            _ = try await client
                 .from("weight") // Your Supabase table name
                 .delete()
                 .eq("id", value: weight.id) // Directly use weight.id since it's an Int
