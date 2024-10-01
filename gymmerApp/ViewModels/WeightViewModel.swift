@@ -18,6 +18,7 @@ class WeightViewModel: ObservableObject {
             let response = try await client
                 .from("weight")
                 .select()
+                .order("date", ascending: false)
                 .execute()
                 .data
             
@@ -34,22 +35,29 @@ class WeightViewModel: ObservableObject {
     }
 
     // Add a new weight
-//    func addWeight(weightValue: Float) async {
-//        let newWeight = Weight(id: UUID(), weight: weightValue, date: Date())
-//        
-//        do {
-//            let response = try await client
-//                .from("weights") // Your Supabase table name
-//                .insert(newWeight)
-//                .execute()
-//            
-//            DispatchQueue.main.async {
-//                self.weights.append(newWeight)
-//            }
-//        } catch {
-//            print("Error adding weight: \(error)")
-//        }
-//    }
+    func addWeight(weightValue: Float) async {
+        // Format the date as a string to insert into Supabase
+        let isoFormatter = ISO8601DateFormatter()
+        let dateString = isoFormatter.string(from: Date()) // Format the current date as a string
+
+        // Create the WeightInsert object
+        let newWeightData = WeightInsert(weight: weightValue, date: dateString)
+
+        do {
+            // Insert the data using the WeightInsert struct
+            _ = try await client
+                .from("weight") // Your Supabase table name
+                .insert(newWeightData) // Pass the newWeightData struct
+                .execute()
+            
+            DispatchQueue.main.async {
+                // Optionally, append to the local list
+                self.weights.append(Weight(id: 0, weight: weightValue, date: Date()))
+            }
+        } catch {
+            print("Error adding weight: \(error)")
+        }
+    }
 
     // Update an existing weight entry
 //    func updateWeight(weight: Weight) async {

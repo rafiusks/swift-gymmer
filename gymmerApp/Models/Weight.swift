@@ -4,17 +4,22 @@ struct Weight: Identifiable, Codable {
     var id: Int
     var weight: Float
     var date: Date
-    var created_at: Date
-    var user_id: UUID
+    var created_at: Date? // Optional, Supabase will generate it
+    var user_id: UUID? // Optional, Supabase will generate it
+    
+    // Custom initializer with default values for optional fields
+        init(id: Int = 0, weight: Float, date: Date, created_at: Date? = nil, user_id: UUID? = nil) {
+            self.id = id
+            self.weight = weight
+            self.date = date
+            self.created_at = created_at // Defaults to nil
+            self.user_id = user_id // Defaults to nil
+        }
 
     // Define the keys as they appear in your JSON response
     enum CodingKeys: String, CodingKey {
-        case id
-        case weight
-        case date
-        case created_at
-        case user_id
-    }
+           case id, weight, date, created_at, user_id
+       }
 
     // Custom Decoding to Handle Date Formats
     init(from decoder: Decoder) throws {
@@ -59,4 +64,10 @@ struct Weight: Identifiable, Codable {
         try container.encode(date, forKey: .date)
         try container.encode(created_at, forKey: .created_at)
     }
+}
+
+// New struct for inserting data into Supabase
+struct WeightInsert: Encodable {
+    var weight: Float
+    var date: String // Date as string formatted to ISO8601
 }
