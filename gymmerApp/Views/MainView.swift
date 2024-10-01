@@ -15,8 +15,6 @@ struct MainView: View {
         VStack {
                     if authViewModel.isLoggedIn {
                         
-//                        TopNav(authViewModel: authViewModel)
-                        
                         // Show the TabView if logged in
                         TabView {
                             DashboardView()

@@ -80,7 +80,7 @@ struct WeightChartView: View {
             }
         }
         .chartYScale(domain: Double(minWeight - 1)...Double(maxWeight + 1))
-        .frame(height: 250)
+        .frame(maxHeight: 250)
         .chartOverlay { proxy in
             GeometryReader { geometry in
                 Rectangle().fill(.clear).contentShape(Rectangle())
