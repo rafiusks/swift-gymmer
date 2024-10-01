@@ -78,20 +78,20 @@ class WeightViewModel: ObservableObject {
 //        }
 //    }
 
-    // Delete a weight entry
-//    func deleteWeight(weight: Weight) async {
-//        do {
-//            let response = try await client
-//                .from("weight") // Your Supabase table name
-//                .delete()
-//                .eq("id", value: weight.id.uuidString)
-//                .execute()
-//            
-//            DispatchQueue.main.async {
-//                self.weights.removeAll(where: { $0.id == weight.id })
-//            }
-//        } catch {
-//            print("Error deleting weight: \(error)")
-//        }
-//    }
+//     Delete a weight entry
+    func deleteWeight(weight: Weight) async {
+        do {
+            let response = try await client
+                .from("weight") // Your Supabase table name
+                .delete()
+                .eq("id", value: weight.id) // Directly use weight.id since it's an Int
+                .execute()
+            
+            DispatchQueue.main.async {
+                self.weights.removeAll(where: { $0.id == weight.id }) // Remove locally
+            }
+        } catch {
+            print("Error deleting weight: \(error)")
+        }
+    }
 }

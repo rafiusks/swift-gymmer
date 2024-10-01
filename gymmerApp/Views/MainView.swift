@@ -35,11 +35,6 @@ struct MainView: View {
                                     Text("Profile")
                                 }
                         }
-//                        Button("Logout") {
-//                            Task {
-//                                await authViewModel.handleSignOut()
-//                            }
-//                        }
                     } else {
                         // Pass the binding for isLoggedIn to AuthView
                         AuthView(isLoggedIn: $authViewModel.isLoggedIn)
