@@ -17,10 +17,12 @@ enum DarkModeSetting: String, CaseIterable, Identifiable {
 
 struct AccountSettingsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-
-    @AppStorage("darkModeSetting") private var darkModeSetting: DarkModeSetting = .system // Store the selected dark mode option
+    
+    @AppStorage("darkModeSetting") private var darkModeSetting: DarkModeSetting = .system
     @State private var selectedUnitSystem: UnitSystem = .metric
-
+    @State private var profileImage: UIImage? = nil // State to hold the profile image
+    @State private var fullName: String = "" // State to hold the user's full name
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -29,9 +31,9 @@ struct AccountSettingsView: View {
                     Text("Settings")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-
+                    
                     Spacer()
-
+                    
                     Button(action: {
                         Task {
                             await authViewModel.handleSignOut()
@@ -44,27 +46,43 @@ struct AccountSettingsView: View {
                                 .foregroundColor(.red)
                         }
                     }
-
                 }
                 .padding(.horizontal)
-
+                
                 // Profile section
-                VStack(spacing: 8) {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 80, height: 80)
-                        .clipShape(Circle())
+                HStack(spacing: 8) {
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 80, height: 80)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 80, height: 80)
+                            .clipShape(Circle())
+                    }
+                    
+                    VStack {
+                        // Display the loaded full name from UserDefaults
+                        Text(fullName.isEmpty ? "Your Name" : fullName)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("Join since 2020")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                    }
+                    
 
-                    Text("Andrei Kozlov")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    Text("Join since 2020")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
                 }
                 .padding()
-
+                .onAppear {
+                    loadImageFromStorage() // Load the profile image on appear
+                    loadFullNameFromStorage() // Load the full name on appear
+                }
+                
                 // Metrics section
                 HStack(spacing: 20) {
                     VStack {
@@ -79,7 +97,7 @@ struct AccountSettingsView: View {
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(12)
-
+                    
                     VStack {
                         Text("96,54%")
                             .font(.title3)
@@ -94,17 +112,16 @@ struct AccountSettingsView: View {
                     .cornerRadius(12)
                 }
                 .padding(.horizontal)
-
+                
                 // Settings list
                 List {
                     NavigationLink(destination: EditProfileView()) {
                         SettingsRowView(icon: "person.fill", text: "Edit Profile")
                             .frame(height: 50)
                     }
-
+                    
                     SettingsRowView(icon: "star.fill", text: "Set my goal")
                         .frame(height: 50)
-                    
                 }
                 .listStyle(.plain)
                 
@@ -122,7 +139,7 @@ struct AccountSettingsView: View {
                         .pickerStyle(SegmentedPickerStyle()) // Use segmented style for the options
                     }
                     .frame(height: 50)
-
+                    
                     // Unit system picker
                     HStack {
                         Label("", systemImage: "ruler")
@@ -142,16 +159,35 @@ struct AccountSettingsView: View {
             .preferredColorScheme(determineColorScheme()) // Apply the color scheme dynamically
         }
     }
-
+    
     // Function to determine which color scheme to apply
     private func determineColorScheme() -> ColorScheme? {
         switch darkModeSetting {
-        case .on:
-            return .dark
-        case .off:
-            return .light
-        case .system:
-            return nil // Use system's default setting
+            case .on:
+                return .dark
+            case .off:
+                return .light
+            case .system:
+                return nil // Use system's default setting
+        }
+    }
+    
+    // Function to load the profile image from local storage
+    private func loadImageFromStorage() {
+        if let imagePath = UserDefaults.standard.string(forKey: "profileImagePath") {
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: imagePath) {
+                if let imageData = UIImage(contentsOfFile: imagePath) {
+                    profileImage = imageData
+                }
+            }
+        }
+    }
+    
+    // Function to load the full name from UserDefaults
+    private func loadFullNameFromStorage() {
+        if let savedFullName = UserDefaults.standard.string(forKey: "fullName") {
+            fullName = savedFullName
         }
     }
 }
@@ -160,16 +196,12 @@ struct AccountSettingsView: View {
 struct SettingsRowView: View {
     var icon: String
     var text: String
-
+    
     var body: some View {
         HStack {
             Label(text, systemImage: icon)
                 .foregroundColor(.primary)
-            Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
         }
-        .padding(.vertical, 8)
     }
 }
 

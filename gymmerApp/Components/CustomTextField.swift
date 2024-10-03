@@ -1,27 +1,32 @@
 import SwiftUI
 
 struct CustomTextField: View {
+    
     var icon: String
     var placeholder: String
     @Binding var text: String
-    var isSecure: Bool
+    var isSecure: Bool?
+    var isLowercase: Bool?
     var useSpacer: Bool?
-
+    
     var body: some View {
         HStack {
             Image(systemName: icon)
                 .foregroundColor(.gray)
             
+            // Use spacer to push content apart
             if useSpacer ?? false {
-                Spacer().frame(maxWidth: .infinity) // Pushes the content apart
+                Spacer()
             }
             
-            if isSecure {
+            if isSecure == true {
                 SecureField(placeholder, text: $text)
             } else {
-                if useSpacer ?? false {
+                
+                // Conditional for secure and non-secure fields
+                if isLowercase == true {
                     TextField(placeholder, text: $text)
-                        .multilineTextAlignment(.trailing)
+                        .multilineTextAlignment(useSpacer ?? false ? .trailing : .leading)
                         .onChange(of: text) { oldValue, newValue in
                             if newValue != newValue.lowercased() {
                                 text = newValue.lowercased()
@@ -29,11 +34,7 @@ struct CustomTextField: View {
                         }
                 } else {
                     TextField(placeholder, text: $text)
-                        .onChange(of: text) { oldValue, newValue in
-                            if newValue != newValue.lowercased() {
-                                text = newValue.lowercased()
-                            }
-                        }
+                        .multilineTextAlignment(useSpacer ?? false ? .trailing : .leading)
                 }
             }
         }
@@ -46,8 +47,19 @@ struct CustomTextField: View {
 
 #Preview {
     VStack(spacing: 16) {
-        CustomTextField(icon: "envelope", placeholder: "Email", text: .constant(""), isSecure: false, useSpacer: false) // Spacer included
-        CustomTextField(icon: "lock", placeholder: "Password", text: .constant(""), isSecure: true, useSpacer: false)  // Without spacer
+        CustomTextField(
+            icon: "envelope",
+            placeholder: "Email",
+            text: .constant(""),
+            isLowercase: true,
+            useSpacer: true
+        ) // Spacer included
+        CustomTextField(
+            icon: "lock",
+            placeholder: "Password",
+            text: .constant(""),
+            isSecure: true
+        )  // Without spacer
     }
     .padding()
 }

@@ -24,7 +24,13 @@ struct AuthView: View {
             
             // Group 2: Email and Password input fields + Forgot Password
             VStack(spacing: 20) {
-                CustomTextField(icon: "envelope", placeholder: "Email", text: $email, isSecure: false)
+                CustomTextField(
+                    icon: "envelope",
+                    placeholder: "Email",
+                    text: $email,
+                    isLowercase: true
+                )
+                
                 CustomTextField(icon: "lock", placeholder: "Password", text: $password, isSecure: true)
                 
                 // Forgot password link
