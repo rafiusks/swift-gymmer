@@ -17,6 +17,7 @@ struct CustomTextField: View {
             // Use spacer to push content apart
             if useSpacer ?? false {
                 Spacer()
+                Text(placeholder).foregroundColor(.gray)
             }
             
             if isSecure == true {

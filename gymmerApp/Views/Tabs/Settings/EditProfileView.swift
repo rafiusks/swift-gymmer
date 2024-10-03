@@ -3,7 +3,7 @@ import PhotosUI
 
 struct EditProfileView: View {
     @State private var fullName: String = ""
-    @State private var dateOfBirth: Date = Date()
+    @State private var dateOfBirth: Date = Date() // Store date of birth
     @State private var profileImage: UIImage? = nil
     @State private var isImagePickerPresented: Bool = false
     @State private var showImageSourceOptions: Bool = false
@@ -54,6 +54,8 @@ struct EditProfileView: View {
                         Image(systemName: "calendar")
                             .foregroundColor(.gray)
                         
+                        Text("Birthday").foregroundColor(.gray)
+                        
                         Spacer()
                         
                         DatePicker("", selection: $dateOfBirth, displayedComponents: .date)
@@ -75,11 +77,12 @@ struct EditProfileView: View {
             
             // Update Profile Button
             Button(action: {
-                // Save profile image and name
+                // Save profile image, name, and date of birth
                 if let profileImage = profileImage {
                     saveImageLocally(image: profileImage)
                 }
                 saveFullName() // Save the full name
+                saveDateOfBirth() // Save date of birth
                 // Show confirmation alert after updating
                 showConfirmationAlert = true
             }) {
@@ -126,6 +129,7 @@ struct EditProfileView: View {
         .onAppear {
             loadImageFromStorage() // Load saved profile image
             loadFullNameFromStorage() // Load saved full name
+            loadDateOfBirthFromStorage() // Load saved date of birth
         }
     }
     
@@ -168,6 +172,18 @@ struct EditProfileView: View {
     func loadFullNameFromStorage() {
         if let savedFullName = UserDefaults.standard.string(forKey: "fullName") {
             fullName = savedFullName
+        }
+    }
+    
+    // Save date of birth to UserDefaults
+    func saveDateOfBirth() {
+        UserDefaults.standard.set(dateOfBirth, forKey: "dateOfBirth")
+    }
+    
+    // Load date of birth from UserDefaults
+    func loadDateOfBirthFromStorage() {
+        if let savedDateOfBirth = UserDefaults.standard.object(forKey: "dateOfBirth") as? Date {
+            dateOfBirth = savedDateOfBirth
         }
     }
 }

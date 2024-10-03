@@ -22,6 +22,8 @@ struct AccountSettingsView: View {
     @State private var selectedUnitSystem: UnitSystem = .metric
     @State private var profileImage: UIImage? = nil // State to hold the profile image
     @State private var fullName: String = "" // State to hold the user's full name
+    @State private var dateOfBirth: Date = Date() // State to hold the user's date of birth
+    @State private var age: Int? // State to hold the calculated age
     
     var body: some View {
         NavigationView {
@@ -65,53 +67,32 @@ struct AccountSettingsView: View {
                             .clipShape(Circle())
                     }
                     
-                    VStack {
+                    VStack(alignment: .leading) {
                         // Display the loaded full name from UserDefaults
                         Text(fullName.isEmpty ? "Your Name" : fullName)
                             .font(.title2)
                             .fontWeight(.semibold)
-                        Text("Join since 2020")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
+                        
+                        // Display the user's age if available
+                        if let age = age {
+                            Text("\(age) years old")
+                                .font(.footnote)
+                                .foregroundColor(.gray)
+                        } else {
+                            Text("Unknown age")
+                                .font(.footnote)
+                                .foregroundColor(.gray)
+                        }
                     }
                     
-
+                    Spacer()
                 }
                 .padding()
                 .onAppear {
                     loadImageFromStorage() // Load the profile image on appear
                     loadFullNameFromStorage() // Load the full name on appear
+                    loadDateOfBirthFromStorage() // Load the date of birth and calculate age
                 }
-                
-                // Metrics section
-                HStack(spacing: 20) {
-                    VStack {
-                        Text("10 h 52 m")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                        Text("Time Spending")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(12)
-                    
-                    VStack {
-                        Text("96,54%")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                        Text("Wellness statistics")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(12)
-                }
-                .padding(.horizontal)
                 
                 // Settings list
                 List {
@@ -189,6 +170,21 @@ struct AccountSettingsView: View {
         if let savedFullName = UserDefaults.standard.string(forKey: "fullName") {
             fullName = savedFullName
         }
+    }
+    
+    // Function to load the date of birth and calculate age
+    private func loadDateOfBirthFromStorage() {
+        if let savedDateOfBirth = UserDefaults.standard.object(forKey: "dateOfBirth") as? Date {
+            dateOfBirth = savedDateOfBirth
+            age = calculateAge(from: savedDateOfBirth) // Calculate the age based on the saved date of birth
+        }
+    }
+    
+    // Helper function to calculate age based on the date of birth
+    private func calculateAge(from date: Date) -> Int {
+        let calendar = Calendar.current
+        let ageComponents = calendar.dateComponents([.year], from: date, to: Date())
+        return ageComponents.year ?? 0
     }
 }
 
