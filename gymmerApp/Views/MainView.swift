@@ -1,38 +1,41 @@
 import SwiftUI
-import Supabase
 
 struct MainView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel // Use EnvironmentObject for AuthViewModel
-
+    @State private var selectedTab: Int = 0 // Control the selected tab
+    
     var body: some View {
-        VStack {
-            if authViewModel.isLoggedIn {
-                // Show the TabView if logged in
-                TabView {
-                    DashboardView()
-                        .tabItem {
-                            Image(systemName: "person.crop.circle")
-                            Text("Dashboard")
-                        }
-                    WeightListView()
-                        .tabItem {
-                            Image(systemName: "person.crop.circle")
-                            Text("Measurements")
-                        }
-                    AccountSettingsView()
-                        .tabItem {
-                            Image(systemName: "person.crop.circle")
-                            Text("Profile")
-                        }
+        TabView(selection: $selectedTab) {
+            DashboardView()
+                .tabItem {
+                    Image(systemName: "house")
+                    Text("Dashboard")
                 }
-            } else {
-                // Show AuthView if not logged in
-                AuthView(isLoggedIn: $authViewModel.isLoggedIn)
-            }
+                .tag(0)
+            
+            WeightListView()
+                .tabItem {
+                    Image(systemName: "list.bullet")
+                    Text("Weight")
+                }
+                .tag(1)
+            
+            AccountSettingsView()
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                }
+                .tag(2)
         }
-        .onAppear {
-            authViewModel.checkSession() // Check session when the view appears
-        }
+        .environmentObject(TabSelection(selectedTab: $selectedTab))
+    }
+}
+
+// Create an environment object to share tab selection across views
+class TabSelection: ObservableObject {
+    @Binding var selectedTab: Int
+    
+    init(selectedTab: Binding<Int>) {
+        self._selectedTab = selectedTab
     }
 }
 
