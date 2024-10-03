@@ -1,49 +1,42 @@
-//
-//  ContentView.swift
-//  gymmerApp
-//
-//  Created by Rafael Alves Vidal on 30/9/2024.
-//
-
 import SwiftUI
 import Supabase
 
 struct MainView: View {
-    @StateObject var authViewModel = AuthViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel // Use EnvironmentObject for AuthViewModel
 
     var body: some View {
         VStack {
-                    if authViewModel.isLoggedIn {
-                        
-                        // Show the TabView if logged in
-                        TabView {
-                            DashboardView()
-                                .tabItem {
-                                    Image(systemName: "person.crop.circle")
-                                    Text("Dashboard")
-                                }
-                            WeightListView()
-                                .tabItem {
-                                    Image(systemName: "person.crop.circle")
-                                    Text("Measurements")
-                                }
-                            ProfileView()
-                                .tabItem {
-                                    Image(systemName: "person.crop.circle")
-                                    Text("Profile")
-                                }
+            if authViewModel.isLoggedIn {
+                // Show the TabView if logged in
+                TabView {
+                    DashboardView()
+                        .tabItem {
+                            Image(systemName: "person.crop.circle")
+                            Text("Dashboard")
                         }
-                    } else {
-                        // Pass the binding for isLoggedIn to AuthView
-                        AuthView(isLoggedIn: $authViewModel.isLoggedIn)
-                    }
+                    WeightListView()
+                        .tabItem {
+                            Image(systemName: "person.crop.circle")
+                            Text("Measurements")
+                        }
+                    AccountSettingsView()
+                        .tabItem {
+                            Image(systemName: "person.crop.circle")
+                            Text("Profile")
+                        }
                 }
-                .onAppear {
-                    authViewModel.checkSession()
-                }
+            } else {
+                // Show AuthView if not logged in
+                AuthView(isLoggedIn: $authViewModel.isLoggedIn)
+            }
+        }
+        .onAppear {
+            authViewModel.checkSession() // Check session when the view appears
+        }
     }
 }
 
 #Preview {
     MainView()
+        .environmentObject(AuthViewModel()) // Inject AuthViewModel for Preview
 }

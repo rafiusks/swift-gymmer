@@ -11,7 +11,8 @@ import SwiftUI
 struct gymmerAppApp: App {
     var body: some Scene {
         WindowGroup {
-            MainView()
-        }
+                    MainView() // The root view
+                        .environmentObject(AuthViewModel()) // Inject the shared AuthViewModel
+                }
     }
 }
