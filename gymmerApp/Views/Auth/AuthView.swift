@@ -1,5 +1,4 @@
 import SwiftUI
-import Supabase
 
 struct AuthView: View {
     @State private var email = ""
@@ -47,42 +46,20 @@ struct AuthView: View {
             Button(action: {
                 signInButtonTapped()
             }) {
-                if isLoading {
-                    ProgressView() // Show a progress indicator when loading
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                } else {
-                    HStack {
-                        Image(systemName: "arrow.right.circle.fill")
-                        Text("Login")
-                            .fontWeight(.semibold)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
-                    .cornerRadius(25)
-                    .shadow(radius: 5)
+                HStack {
+                    Image(systemName: "arrow.right.circle.fill")
+                    Text("Login")
+                        .fontWeight(.semibold)
                 }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .foregroundColor(.white)
+                .background(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
+                .cornerRadius(25)
+                .shadow(radius: 5)
             }
             .padding(.horizontal, 32)
             .padding(.top, 24)
-
-            // Display error or success message
-            if let result = result {
-                VStack {
-                    switch result {
-                    case .success:
-                        Text("Login Successful")
-                            .foregroundColor(.green)
-                            .fontWeight(.bold)
-                    case .failure(let error):
-                        Text(error.localizedDescription)
-                            .foregroundColor(.red)
-                    }
-                }
-                .padding(.top, 10)
-            }
         }
         .onOpenURL { url in
             Task {
@@ -111,30 +88,6 @@ struct AuthView: View {
                 result = .failure(error)
             }
         }
-    }
-}
-
-// Custom text field with icon
-struct CustomTextField: View {
-    var icon: String
-    var placeholder: String
-    @Binding var text: String
-    var isSecure: Bool
-
-    var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(.gray)
-            if isSecure {
-                SecureField(placeholder, text: $text)
-            } else {
-                TextField(placeholder, text: $text)
-            }
-        }
-        .padding()
-        .background(Color(UIColor.systemGray6))
-        .cornerRadius(10)
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.3), lineWidth: 1))
     }
 }
 
