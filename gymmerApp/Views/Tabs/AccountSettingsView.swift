@@ -19,7 +19,7 @@ struct AccountSettingsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     
     @AppStorage("darkModeSetting") private var darkModeSetting: DarkModeSetting = .system
-    @State private var selectedUnitSystem: UnitSystem = .metric
+    @AppStorage("selectedUnitSystem") private var storedUnitSystem: String = UnitSystem.metric.rawValue // Store the unit system in UserDefaults as a string
     @State private var profileImage: UIImage? = nil // State to hold the profile image
     @State private var fullName: String = "" // State to hold the user's full name
     @State private var dateOfBirth: Date = Date() // State to hold the user's date of birth
@@ -94,6 +94,36 @@ struct AccountSettingsView: View {
                     loadDateOfBirthFromStorage() // Load the date of birth and calculate age
                 }
                 
+                // Metrics section
+                HStack(spacing: 20) {
+                    VStack {
+                        Text("10 h 52 m")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                        Text("Time Spending")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(UIColor.systemGray6))
+                    .cornerRadius(12)
+                    
+                    VStack {
+                        Text("96,54%")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                        Text("Wellness statistics")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(UIColor.systemGray6))
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal)
+                
                 // Settings list
                 List {
                     NavigationLink(destination: EditProfileView()) {
@@ -125,7 +155,14 @@ struct AccountSettingsView: View {
                     HStack {
                         Label("", systemImage: "ruler")
                         Spacer()
-                        Picker("", selection: $selectedUnitSystem) {
+                        Picker("", selection: Binding(
+                            get: {
+                                UnitSystem(rawValue: storedUnitSystem) ?? .metric // Convert stored value back to `UnitSystem`
+                            },
+                            set: { newValue in
+                                storedUnitSystem = newValue.rawValue // Store selected value as string in UserDefaults
+                            }
+                        )) {
                             ForEach(UnitSystem.allCases) { system in
                                 Text(system.rawValue).tag(system)
                             }

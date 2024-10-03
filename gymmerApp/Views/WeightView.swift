@@ -40,7 +40,7 @@ struct WeightListView: View {
                                 HStack {
                                     Text(dateFormatter.string(from: weight.date)).font(.subheadline).frame(width: 120)
                                     Spacer()
-                                    Text("\(weight.weight, specifier: "%.2f") kg").font(.subheadline).frame(width: 120)
+                                    Text("\(weight.weight, specifier: "%.2f")\(WeightUnit().unit)").font(.subheadline).frame(width: 120)
                                     Spacer()
 
                                     if let nextWeight = nextWeight {

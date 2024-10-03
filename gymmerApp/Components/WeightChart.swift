@@ -43,7 +43,7 @@ struct WeightChartView: View {
     var weightTitle: some View {
         Group {
             if let latestWeight = latestWeight {
-                Text("Last update: \(latestWeight.weight, specifier: "%.2f") kg, \(formattedDate)")
+                Text("Last update: \(latestWeight.weight, specifier: "%.2f") \(WeightUnit().unit), \(formattedDate)")
                     .font(.headline)
                     .padding()
             } else {
