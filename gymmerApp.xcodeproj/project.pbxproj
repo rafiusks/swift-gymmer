@@ -21,9 +21,22 @@
 		5339AD842CAF941300037CA7 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		53F33AFF2CAFE51A004D37EA /* Exceptions for "gymmerApp" folder in "gymmerApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 530E210E2CAAE05A00F3F3A8 /* gymmerApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		530E21112CAAE05A00F3F3A8 /* gymmerApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				53F33AFF2CAFE51A004D37EA /* Exceptions for "gymmerApp" folder in "gymmerApp" target */,
+			);
 			path = gymmerApp;
 			sourceTree = "<group>";
 		};
@@ -283,8 +296,10 @@
 				DEVELOPMENT_TEAM = 328YL549A2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = gymmerApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Gymmer;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Can can be used to create a new profile picture";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -319,8 +334,10 @@
 				DEVELOPMENT_TEAM = 328YL549A2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = gymmerApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Gymmer;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Can can be used to create a new profile picture";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
