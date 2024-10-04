@@ -1,30 +1,36 @@
 import Supabase
 import SwiftUI
 
+@MainActor
 class AuthViewModel: ObservableObject {
     @Published var isLoggedIn: Bool = false
-
+    
     init() {
         checkSession() // Automatically check session on init
     }
-
+    
     func checkSession() {
         Task {
             do {
                 let session = try await supabase.auth.session
                 DispatchQueue.main.async {
-                    // Check if the session is valid and update state
                     self.isLoggedIn = !session.accessToken.isEmpty
                 }
-            } catch {
-                DispatchQueue.main.async {
-                    // If no session is found or an error occurs, set to logged out
-                    self.isLoggedIn = false
+            } catch let error as NSError {
+                if error.code == errSecItemNotFound {
+                    // This is not an error, just means there's no session
+                    DispatchQueue.main.async {
+                        self.isLoggedIn = false
+                    }
+                } else {
+                    // Handle other errors
+                    print("Error retrieving session: \(error.localizedDescription)")
+                    await self.handleSignOut()
                 }
             }
         }
     }
-
+    
     func handleSignOut() async {
         do {
             try await supabase.auth.signOut()

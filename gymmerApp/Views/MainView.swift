@@ -2,31 +2,43 @@ import SwiftUI
 
 struct MainView: View {
     @State private var selectedTab: Int = 0 // Control the selected tab
+    @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            DashboardView()
-                .tabItem {
-                    Image(systemName: "house")
-                    Text("Dashboard")
-                }
-                .tag(0)
+        
+        VStack{
             
-            WeightListView()
-                .tabItem {
-                    Image(systemName: "list.bullet")
-                    Text("Weight")
+            if authViewModel.isLoggedIn {
+                TabView(selection: $selectedTab) {
+                    DashboardView()
+                        .tabItem {
+                            Image(systemName: "house")
+                            Text("Dashboard")
+                        }
+                        .tag(0)
+                    
+                    WeightListView()
+                        .tabItem {
+                            Image(systemName: "list.bullet")
+                            Text("Weight")
+                        }
+                        .tag(1)
+                    
+                    AccountSettingsView()
+                        .tabItem {
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
+                        .tag(2)
                 }
-                .tag(1)
-            
-            AccountSettingsView()
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
+                .environmentObject(TabSelection(selectedTab: $selectedTab))
+                .task {
+                    authViewModel.checkSession() // Check if session is valid
                 }
-                .tag(2)
+            } else {
+                AuthView(isLoggedIn: $authViewModel.isLoggedIn)
+            }
         }
-        .environmentObject(TabSelection(selectedTab: $selectedTab))
     }
 }
 

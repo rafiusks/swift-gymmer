@@ -8,12 +8,15 @@
 import Supabase
 import SwiftUI
 
+@MainActor
 class WeightViewModel: ObservableObject {
     @Published var weights: [Weight] = [] // Holds the list of weights
     let client = supabase // Access the Supabase client
     
     // Fetch weights from Supabase
+    
     func fetchWeights() async {
+        
         do {
             let response = try await client
                 .from("weight")
@@ -22,27 +25,24 @@ class WeightViewModel: ObservableObject {
                 .execute()
                 .data
             
-            DispatchQueue.main.async {
-                do {
-                    self.weights = try JSONDecoder().decode([Weight].self, from: response)
-                } catch {
-                    print("Failed to decode weights: \(error)")
-                }
-            }
+            let decodedWeights = try JSONDecoder().decode([Weight].self, from: response)
+            
+            self.weights = decodedWeights
         } catch {
             print("Error fetching weights: \(error)")
         }
     }
 
     // Add a new weight
+    
     func addWeight(weightValue: Float) async {
         // Format the date as a string to insert into Supabase
         let isoFormatter = ISO8601DateFormatter()
         let dateString = isoFormatter.string(from: Date()) // Format the current date as a string
-
+        
         // Create the WeightInsert object
         let newWeightData = WeightInsert(weight: weightValue, date: dateString)
-
+        
         do {
             // Insert the data using the WeightInsert struct
             _ = try await client
@@ -50,9 +50,9 @@ class WeightViewModel: ObservableObject {
                 .insert(newWeightData) // Pass the newWeightData struct
                 .execute()
             
-            DispatchQueue.main.async {
-                // Optionally, append to the local list
-                self.weights.append(Weight(id: 0, weight: weightValue, date: Date()))
+            // Fetch the updated weights after insertion
+            Task {
+                await self.fetchWeights()
             }
         } catch {
             print("Error adding weight: \(error)")
@@ -79,6 +79,7 @@ class WeightViewModel: ObservableObject {
 //    }
 
 //     Delete a weight entry
+    
     func deleteWeight(weight: Weight) async {
         do {
             _ = try await client

@@ -2,6 +2,7 @@ import SwiftUI
 
 // Helper to show UIAlertController in SwiftUI
 struct WeightInputAlert {
+    @MainActor
     static func show(title: String, message: String?, onAdd: @escaping (Float) -> Void) {
         guard let topController = UIViewController.topViewController() else { return }
 
