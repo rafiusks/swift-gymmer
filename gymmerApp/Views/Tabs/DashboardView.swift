@@ -62,7 +62,7 @@ struct DashboardView: View {
             
             Spacer()
             
-            WorkoutProgressWidget()
+            //TODO: More widgets, selection and sorter
             
             Spacer()
         }

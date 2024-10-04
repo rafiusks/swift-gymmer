@@ -9,7 +9,8 @@ import SwiftUI
 
 struct MeasurementsView: View {
     var body: some View {
-        Text("Hello, Scales!")
+        Text("Future measurement screen will go here!")
+        Text("At the moment, I'm using the the weight screen")
     }
 }
 

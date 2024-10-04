@@ -13,12 +13,12 @@ struct AuthView: View {
         VStack {
             // Group 1: Welcome Text
             VStack(spacing: 8) {
-                Text("Hey there,")
-                    .font(.title2)
-                    .foregroundColor(.gray)
-                Text("Welcome Back")
+                Text("Gymmer")
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                Text("Don't forget to stretch")
+                    .font(.title2)
+                    .foregroundColor(.gray)
             }
             .padding(.bottom, 50) // Increase the spacing between groups
             
@@ -33,17 +33,8 @@ struct AuthView: View {
                 
                 CustomTextField(icon: "lock", placeholder: "Password", text: $password, isSecure: true)
                 
-                // Forgot password link
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        // Forgot password logic
-                    }) {
-                        Text("Forgot your password?")
-                            .foregroundColor(.gray)
-                            .font(.footnote)
-                    }
-                }
+                //TODO: Forgot password link and functionality
+                
             }
             .padding(.horizontal, 32)
             .padding(.bottom, 50) // Add space between input fields and the button
@@ -52,20 +43,37 @@ struct AuthView: View {
             Button(action: {
                 signInButtonTapped()
             }) {
-                HStack {
-                    Image(systemName: "arrow.right.circle.fill")
-                    Text("Login")
-                        .fontWeight(.semibold)
+                VStack(alignment: .center) {
+                    Text("Currently in development, \n no sign in available.")
+                        .foregroundStyle(Color(UIColor.systemRed))
+                        .padding(.bottom, 20)
+                    
+                    HStack {
+                        Image(systemName: "arrow.right.circle.fill")
+                        Text("Login")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(
+                                colors: [
+                                    AppColors.gradientStart,
+                                    AppColors.gradientEnd
+                                ]
+                            ),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .cornerRadius(25)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .foregroundColor(.white)
-                .background(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
-                .cornerRadius(25)
-                .shadow(radius: 5)
+                .padding(.horizontal, 32)
+                .padding(.top, 24)
             }
-            .padding(.horizontal, 32)
-            .padding(.top, 24)
+            
         }
         .onOpenURL { url in
             Task {
@@ -76,6 +84,9 @@ struct AuthView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white) // Apply a plain background to ensure no gradient
+        .ignoresSafeArea()
     }
 
     func signInButtonTapped() {

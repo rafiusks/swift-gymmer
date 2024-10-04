@@ -78,8 +78,9 @@ struct AccountSettingsView: View {
                             Text("\(age) years old")
                                 .font(.footnote)
                                 .foregroundColor(.gray)
-                        } else {
-                            Text("Unknown age")
+                        }
+                        else {
+                            Text("")
                                 .font(.footnote)
                                 .foregroundColor(.gray)
                         }
@@ -94,35 +95,35 @@ struct AccountSettingsView: View {
                     loadDateOfBirthFromStorage() // Load the date of birth and calculate age
                 }
                 
-                // Metrics section
-                HStack(spacing: 20) {
-                    VStack {
-                        Text("10 h 52 m")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                        Text("Time Spending")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(12)
-                    
-                    VStack {
-                        Text("96,54%")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                        Text("Wellness statistics")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(12)
-                }
-                .padding(.horizontal)
+                //I don't know if I need this
+//                HStack(spacing: 20) {
+//                    VStack {
+//                        Text("10 h 52 m")
+//                            .font(.title3)
+//                            .fontWeight(.bold)
+//                        Text("Time Spending")
+//                            .font(.footnote)
+//                            .foregroundColor(.gray)
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color(UIColor.systemGray6))
+//                    .cornerRadius(12)
+//                    
+//                    VStack {
+//                        Text("96,54%")
+//                            .font(.title3)
+//                            .fontWeight(.bold)
+//                        Text("Wellness statistics")
+//                            .font(.footnote)
+//                            .foregroundColor(.gray)
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color(UIColor.systemGray6))
+//                    .cornerRadius(12)
+//                }
+//                .padding(.horizontal)
                 
                 // Settings list
                 List {
@@ -131,8 +132,8 @@ struct AccountSettingsView: View {
                             .frame(height: 50)
                     }
                     
-                    SettingsRowView(icon: "star.fill", text: "Set my goal")
-                        .frame(height: 50)
+                    //TODO: Set goals and more options
+                    
                 }
                 .listStyle(.plain)
                 
