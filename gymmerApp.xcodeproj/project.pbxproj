@@ -13,12 +13,12 @@
 		530E21342CAAEAB400F3F3A8 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 530E21332CAAEAB400F3F3A8 /* Realtime */; };
 		530E21362CAAEAB400F3F3A8 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 530E21352CAAEAB400F3F3A8 /* Storage */; };
 		530E21382CAAEAB400F3F3A8 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 530E21372CAAEAB400F3F3A8 /* Supabase */; };
-		533879052CAF52C300217EE8 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 533879042CAF52C300217EE8 /* TestPlan.xctestplan */; };
+		5339AD852CAF941300037CA7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5339AD842CAF941300037CA7 /* TestPlan.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		530E210F2CAAE05A00F3F3A8 /* gymmerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gymmerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		533879042CAF52C300217EE8 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		5339AD842CAF941300037CA7 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -49,7 +49,7 @@
 		530E21062CAAE05A00F3F3A8 = {
 			isa = PBXGroup;
 			children = (
-				533879042CAF52C300217EE8 /* TestPlan.xctestplan */,
+				5339AD842CAF941300037CA7 /* TestPlan.xctestplan */,
 				530E21112CAAE05A00F3F3A8 /* gymmerApp */,
 				530E21102CAAE05A00F3F3A8 /* Products */,
 			);
@@ -136,7 +136,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				533879052CAF52C300217EE8 /* TestPlan.xctestplan in Resources */,
+				5339AD852CAF941300037CA7 /* TestPlan.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
