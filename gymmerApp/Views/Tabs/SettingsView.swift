@@ -139,18 +139,6 @@ struct AccountSettingsView: View {
                 
                 Text("App Settings")
                 List {
-                    // Dark Mode Picker
-                    HStack {
-                        Label("", systemImage: "moon.fill")
-                        Spacer()
-                        Picker("", selection: $darkModeSetting) {
-                            ForEach(DarkModeSetting.allCases) { mode in
-                                Text(mode.rawValue).tag(mode)
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle()) // Use segmented style for the options
-                    }
-                    .frame(height: 50)
                     
                     // Unit system picker
                     HStack {

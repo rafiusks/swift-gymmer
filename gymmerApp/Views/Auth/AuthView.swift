@@ -5,7 +5,7 @@ struct AuthView: View {
     @State private var password = ""
     @State private var isLoading = false
     @State private var result: Result<Void, Error>?
-    
+
     // Add a binding to update isLoggedIn
     @Binding var isLoggedIn: Bool
 
@@ -20,8 +20,8 @@ struct AuthView: View {
                     .font(.title2)
                     .foregroundColor(.gray)
             }
-            .padding(.bottom, 50) // Increase the spacing between groups
-            
+            .padding(.bottom, 50)  // Increase the spacing between groups
+
             // Group 2: Email and Password input fields + Forgot Password
             VStack(spacing: 20) {
                 CustomTextField(
@@ -30,15 +30,16 @@ struct AuthView: View {
                     text: $email,
                     isLowercase: true
                 )
-                
-                CustomTextField(icon: "lock", placeholder: "Password", text: $password, isSecure: true)
-                
+
+                CustomTextField(
+                    icon: "lock", placeholder: "Password", text: $password, isSecure: true)
+
                 //TODO: Forgot password link and functionality
-                
+
             }
             .padding(.horizontal, 32)
-            .padding(.bottom, 50) // Add space between input fields and the button
-            
+            .padding(.bottom, 50)  // Add space between input fields and the button
+
             // Group 3: Sign in button
             Button(action: {
                 signInButtonTapped()
@@ -47,7 +48,7 @@ struct AuthView: View {
                     Text("Currently in development, \n no sign in available.")
                         .foregroundStyle(Color(UIColor.systemRed))
                         .padding(.bottom, 20)
-                    
+
                     HStack {
                         Image(systemName: "arrow.right.circle.fill")
                         Text("Login")
@@ -61,7 +62,7 @@ struct AuthView: View {
                             gradient: Gradient(
                                 colors: [
                                     AppColors.gradientStart,
-                                    AppColors.gradientEnd
+                                    AppColors.gradientEnd,
                                 ]
                             ),
                             startPoint: .topLeading,
@@ -73,7 +74,7 @@ struct AuthView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 24)
             }
-            
+
         }
         .onOpenURL { url in
             Task {
@@ -85,7 +86,7 @@ struct AuthView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.white) // Apply a plain background to ensure no gradient
+        .background(Color.white)  // Apply a plain background to ensure no gradient
         .ignoresSafeArea()
     }
 
@@ -97,7 +98,7 @@ struct AuthView: View {
             do {
                 try await supabase.auth.signIn(email: email, password: password)
                 result = .success(())
-                
+
                 DispatchQueue.main.async {
                     isLoggedIn = true
                 }

@@ -13,8 +13,27 @@ class WeightViewModel: ObservableObject {
     @Published var weights: [Weight] = [] // Holds the list of weights
     let client = supabase // Access the Supabase client
     
-    // Fetch weights from Supabase
+    // Fetch the latest weight from the database
+    func fetchLatestWeight() async -> Weight? {
+        do {
+            let response = try await client
+                .from("weight")
+                .select()
+                .order("date", ascending: false)
+                .limit(1) // Fetch only the most recent weight
+                .execute()
+                .data
+            
+            let decodedWeights = try JSONDecoder().decode([Weight].self, from: response)
+            
+            return decodedWeights.first // Return the most recent weight
+        } catch {
+            print("Error fetching the latest weight: \(error)")
+            return nil
+        }
+    }
     
+    // Fetch weights from Supabase
     func fetchWeights() async {
         
         do {

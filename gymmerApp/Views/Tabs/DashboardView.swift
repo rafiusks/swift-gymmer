@@ -34,7 +34,6 @@ struct DashboardView: View {
                 
                 Spacer()
                 
-                // Make profile image tappable, navigating to the Settings tab
                 Button(action: {
                     tabSelection.selectedTab = 2 // Change the selected tab to "Settings"
                 }) {
@@ -52,10 +51,10 @@ struct DashboardView: View {
                             .clipShape(Circle())
                     }
                 }
+                
+                
             }
             .padding(.bottom, 20)
-            
-            Spacer()
             
             // Widgets
             WeightTrackingWidget()

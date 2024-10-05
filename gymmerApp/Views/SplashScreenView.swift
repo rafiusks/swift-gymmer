@@ -7,29 +7,30 @@ struct SplashScreenView: View {
     
     var body: some View {
         ZStack {
-            // Background gradient
+            // Dark mode optimized gradient
             LinearGradient(
                 gradient: Gradient(
                     colors: [
-                        AppColors.gradientStart,
-                        AppColors.gradientEnd
+                        AppColors.gradientStart.opacity(0.7), // Slightly muted for dark mode
+                        AppColors.gradientEnd.opacity(0.7)
                     ]
                 ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-                .ignoresSafeArea()
+            .ignoresSafeArea()
             
             if isActive {
                 // Transition to the MainView
                 MainView()
+                    .preferredColorScheme(.dark) // Enforce dark mode throughout the app
             } else {
                 VStack {
                     Spacer()
                     
                     Text("GYMMER") // App name
                         .font(.system(size: 50, weight: .bold))
-                        .foregroundColor(Color.white)
+                        .foregroundColor(Color.white.opacity(0.9)) // Softer white to reduce eye strain
                         .shadow(radius: 10) // Adds a subtle shadow for more depth
                     
                     Spacer()
@@ -41,10 +42,9 @@ struct SplashScreenView: View {
                         .italic()
                         .padding(.bottom, 40)
                     
-                    
-                    // Loading indicator (optional, for visual polish)
+                    // Loading indicator
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.white.opacity(0.8))) // Softer white for loading indicator
                         .scaleEffect(1.5)
                         .padding(.bottom, 60) // Adjust bottom padding
                         .opacity(opacity)
@@ -65,10 +65,12 @@ struct SplashScreenView: View {
                 }
             }
         }
+        .preferredColorScheme(.dark) // Ensures dark mode for the splash screen as well
     }
 }
 
 #Preview {
     SplashScreenView()
+        .environmentObject(WeightViewModel())
         .environmentObject(AuthViewModel()) // Inject environment object for preview
 }
