@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @EnvironmentObject var tabSelection: TabSelection
+    
     @State private var fullName: String = "" // State to hold the user's full name
     @State private var profileImage: UIImage? = nil // State to hold the profile image
-    @EnvironmentObject var tabSelection: TabSelection // Assuming you use an environment object to control the tab selection
+    @State private var isShowingModal = false
     
     // Function to determine the part of the day (morning, afternoon, evening)
     func getGreeting() -> String {
@@ -35,7 +37,7 @@ struct DashboardView: View {
                 Spacer()
                 
                 Button(action: {
-                    tabSelection.selectedTab = 2 // Change the selected tab to "Settings"
+                    isShowingModal = true // Change the selected tab to "Settings"
                 }) {
                     if let profileImage = profileImage {
                         Image(uiImage: profileImage)
@@ -50,6 +52,8 @@ struct DashboardView: View {
                             .frame(width: 50, height: 50)
                             .clipShape(Circle())
                     }
+                }.sheet(isPresented: $isShowingModal) {
+                    SettingsView().preferredColorScheme(.dark)
                 }
                 
                 

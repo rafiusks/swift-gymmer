@@ -23,13 +23,6 @@ struct MainView: View {
                             Text("Weight")
                         }
                         .tag(1)
-                    
-                    AccountSettingsView()
-                        .tabItem {
-                            Image(systemName: "gear")
-                            Text("Settings")
-                        }
-                        .tag(2)
                 }
                 .environmentObject(TabSelection(selectedTab: $selectedTab))
                 .task {
