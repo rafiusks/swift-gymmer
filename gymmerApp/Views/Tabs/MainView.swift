@@ -17,12 +17,21 @@ struct MainView: View {
                         }
                         .tag(0)
                     
+                    WorkoutDashboardView()
+                        .tabItem {
+                            Image(systemName: "dumbbell")
+                            Text("Workout")
+                        }
+                        .tag(1)
+                    
                     WeightListView()
                         .tabItem {
                             Image(systemName: "list.bullet")
                             Text("Weight")
                         }
-                        .tag(1)
+                        .tag(2)
+                    
+                    
                 }
                 .environmentObject(TabSelection(selectedTab: $selectedTab))
                 .task {
@@ -42,9 +51,4 @@ class TabSelection: ObservableObject {
     init(selectedTab: Binding<Int>) {
         self._selectedTab = selectedTab
     }
-}
-
-#Preview {
-    MainView()
-        .environmentObject(AuthViewModel()) // Inject AuthViewModel for Preview
 }

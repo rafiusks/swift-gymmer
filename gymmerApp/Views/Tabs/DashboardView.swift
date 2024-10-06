@@ -22,57 +22,57 @@ struct DashboardView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            // Profile Image and Greeting Section
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("\(getGreeting()), \(fullName)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7) // Ensure long names fit
-                    Text("Welcome back")
+        NavigationView{
+            VStack(spacing: 20) {
+                // Profile Image and Greeting Section
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("\(getGreeting()), \(fullName)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7) // Ensure long names fit
+                        Text("Welcome back")
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        isShowingModal = true // Change the selected tab to "Settings"
+                    }) {
+                        if let profileImage = profileImage {
+                            Image(uiImage: profileImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 50, height: 50)
+                                .clipShape(Circle())
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 50, height: 50)
+                                .clipShape(Circle())
+                        }
+                    }.sheet(isPresented: $isShowingModal) {
+                        SettingsView().preferredColorScheme(.dark)
+                    }
+                    
+                    
                 }
+                .padding(.bottom, 20)
+                
+                // Widgets
+                WeightTrackingWidget()
+                
+                TodaysWorkoutWidget()
                 
                 Spacer()
-                
-                Button(action: {
-                    isShowingModal = true // Change the selected tab to "Settings"
-                }) {
-                    if let profileImage = profileImage {
-                        Image(uiImage: profileImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.circle.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                    }
-                }.sheet(isPresented: $isShowingModal) {
-                    SettingsView().preferredColorScheme(.dark)
-                }
-                
-                
             }
-            .padding(.bottom, 20)
-            
-            // Widgets
-            WeightTrackingWidget()
-            
-            Spacer()
-            
-            //TODO: More widgets, selection and sorter
-            
-            Spacer()
-        }
-        .padding()
-        .onAppear {
-            loadImageFromStorage() // Load the profile image when the view appears
-            loadFullNameFromStorage()
+            .padding()
+            .onAppear {
+                loadImageFromStorage() // Load the profile image when the view appears
+                loadFullNameFromStorage()
+            }
         }
     }
     

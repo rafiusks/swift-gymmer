@@ -56,8 +56,8 @@ struct SplashScreenView: View {
                         self.opacity = 1.0
                     }
                     
-                    // Transition to the main view after delay
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    // Transition to the main view after delay //2 seconds in prod
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0) {
                         withAnimation {
                             isActive = true
                         }

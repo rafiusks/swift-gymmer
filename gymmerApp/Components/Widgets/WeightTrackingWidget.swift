@@ -116,7 +116,7 @@ struct WeightTrackingWidget: View {
                         }
                     }
                     .frame(width: 100, height: 100)
-                    .padding(.trailing, 50)
+                    .padding(.trailing, 35)
                     
                     Spacer()
                     
@@ -167,20 +167,19 @@ struct WeightTrackingWidget: View {
                     }
                     
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 20)
                 
                 
                 Spacer()
             }
-            .frame(height: 190)
+            .frame(height: 170)
             
         }
         .frame(height: 200, alignment: .top) // Constrain the overall widget height
-        //        .clipped() // Clip any overflow content from the ZStack
         .background(Color(UIColor.systemGray6))
         .cornerRadius(10) // Rounded corners
         .onTapGesture {
-            tabSelection.selectedTab = 1 // Change to the weight tab
+            tabSelection.selectedTab = 2 // Change to the weight tab
         }
         .onAppear {
             Task {
@@ -197,6 +196,6 @@ struct WeightTrackingWidget: View {
 #Preview {
     WeightTrackingWidget().preferredColorScheme(.dark)
         .environmentObject(WeightViewModel()) // Provide the weight view model
-        .environmentObject(TabSelection(selectedTab: .constant(1)))
+        .environmentObject(TabSelection(selectedTab: .constant(2)))
     
 }
