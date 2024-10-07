@@ -10,11 +10,14 @@ struct WorkoutDetailView: View {
     
     @State private var workoutLog: [ExerciseLog] = []
     @State private var activeExerciseId: UUID? // Track the currently active exercise
+    @State private var showTimerModal = false // State to control the modal
     
     var body: some View {
         ScrollView {
             VStack(spacing: 40) {
                 headerSection
+                Divider().padding(.horizontal)
+                timerButton // Button to show the timer modal
                 Divider().padding(.horizontal)
                 exerciseListSection
                 Spacer()
@@ -28,6 +31,10 @@ struct WorkoutDetailView: View {
             // Set the first exercise as active on load
             activeExerciseId = exercises.first?.id
         }
+        .sheet(isPresented: $showTimerModal) {
+            TimerModal(isPresented: $showTimerModal)
+                .presentationDetents([.medium]) // Control card modal size (optional)
+        }
     }
     
     // Separate header into its own View
@@ -39,6 +46,23 @@ struct WorkoutDetailView: View {
                 .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+    }
+    
+    // Timer Button
+    private var timerButton: some View {
+        Button(action: {
+            showTimerModal = true // Show the timer modal
+        }) {
+            Text("Open Timer")
+                .bold()
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.orange)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .shadow(radius: 5)
+        }
         .padding(.horizontal)
     }
     
@@ -64,56 +88,19 @@ struct WorkoutDetailView: View {
     
     private func exerciseCard(for exercise: Exercise) -> some View {
         VStack(alignment: .leading) {
-            // If the exercise is active, allow navigation. Otherwise, disable it.
             if exercise.id == activeExerciseId {
                 NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                     exerciseHeader(for: exercise)
                         .foregroundColor(.green) // Change the color to green when active
                 }
             } else {
-                // Just the header for inactive exercises, no navigation
                 exerciseHeader(for: exercise)
-                    .foregroundColor(.primary) // Default color for inactive exercises
+                    .foregroundColor(.primary)
             }
             
-            // Expand/collapse the rest of the card based on active state
             if exercise.id == activeExerciseId {
                 Divider().padding(.bottom)
-                
-                // Add a header for "Weight" and "Reps"
-                HStack {
-                    Spacer()
-                    Text("Weight (kg)")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                        .frame(width: 100, alignment: .center)
-                    Text("Reps")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                        .frame(width: 60, alignment: .center)
-                    Spacer().frame(width: 40)
-                }
-                
-                if let exerciseLogIndex = workoutLog.firstIndex(where: { $0.exerciseId == exercise.id }) {
-                    ForEach(workoutLog[exerciseLogIndex].sets.indices, id: \.self) { setIndex in
-                        exerciseSetView(for: exercise, setIndex: setIndex)
-                    }
-                }
-                
-                // Add Set Button (aligned to the left)
-                Button(action: {
-                    withAnimation {
-                        addNewSet(for: exercise)
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add Set")
-                    }
-                    .foregroundColor(.green)
-                    .padding(.vertical, 5)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading) // Align button to the left
+                exerciseDetails(for: exercise)
             }
         }
         .padding()
@@ -133,10 +120,43 @@ struct WorkoutDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            // Show chevron if the exercise is active
             if exercise.id == activeExerciseId {
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.green) // Make chevron green for active
+                    .foregroundColor(.green)
+            }
+        }
+    }
+    
+    private func exerciseDetails(for exercise: Exercise) -> some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Spacer()
+                Text("Weight (kg)")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                    .frame(width: 100)
+                Text("Reps")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                    .frame(width: 60)
+            }
+            
+            if let exerciseLogIndex = workoutLog.firstIndex(where: { $0.exerciseId == exercise.id }) {
+                ForEach(workoutLog[exerciseLogIndex].sets.indices, id: \.self) { setIndex in
+                    exerciseSetView(for: exercise, setIndex: setIndex)
+                }
+            }
+            
+            Button(action: {
+                withAnimation {
+                    addNewSet(for: exercise)
+                }
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add Set")
+                }
+                .foregroundColor(.green)
             }
         }
     }
@@ -149,56 +169,45 @@ struct WorkoutDetailView: View {
             Spacer()
             
             if let exerciseLogIndex = workoutLog.firstIndex(where: { $0.exerciseId == exercise.id }) {
-                // Ensure there are enough sets in the workout log to prevent crashes
-                if workoutLog[exerciseLogIndex].sets.indices.contains(setIndex) {
-                    // Weight TextField (disable when not active)
-                    TextField("Weight", value: $workoutLog[exerciseLogIndex].sets[setIndex].weight, format: .number)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 100)
-                        .disabled(exercise.id != activeExerciseId) // Disable when not active
-                    
-                    // Reps TextField (disable when not active)
-                    TextField("Reps", value: $workoutLog[exerciseLogIndex].sets[setIndex].reps, format: .number)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 60)
-                        .disabled(exercise.id != activeExerciseId) // Disable when not active
-                    
-                    // Remove set button (except for the first set)
-                    if setIndex > 0 && exercise.id == activeExerciseId { // Only show for active exercise
-                        Button(action: {
-                            withAnimation {
-                                removeSet(for: exercise, setIndex: setIndex)
-                            }
-                        }) {
-                            Image(systemName: "minus.circle.fill")
-                                .foregroundColor(.red)
+                TextField("Weight", value: $workoutLog[exerciseLogIndex].sets[setIndex].weight, format: .number)
+                    .keyboardType(.decimalPad)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(width: 100)
+                
+                TextField("Reps", value: $workoutLog[exerciseLogIndex].sets[setIndex].reps, format: .number)
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(width: 60)
+                
+                if setIndex > 0 {
+                    Button(action: {
+                        withAnimation {
+                            removeSet(for: exercise, setIndex: setIndex)
                         }
-                    } else {
+                    }) {
                         Image(systemName: "minus.circle.fill")
-                            .foregroundColor(.clear) // Placeholder to maintain alignment
+                            .foregroundColor(.red)
                     }
+                } else {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundColor(.clear)
                 }
             }
         }
     }
     
-    // Add a new set
     private func addNewSet(for exercise: Exercise) {
         if let exerciseLogIndex = workoutLog.firstIndex(where: { $0.exerciseId == exercise.id }) {
             workoutLog[exerciseLogIndex].sets.append(ExerciseSet())
         }
     }
     
-    // Remove a specific set
     private func removeSet(for exercise: Exercise, setIndex: Int) {
         if let exerciseLogIndex = workoutLog.firstIndex(where: { $0.exerciseId == exercise.id }) {
             workoutLog[exerciseLogIndex].sets.remove(at: setIndex)
         }
     }
     
-    // Save Workout Button
     private var saveWorkoutButton: some View {
         Button(action: {
             saveWorkoutLog()
@@ -209,25 +218,22 @@ struct WorkoutDetailView: View {
                 .frame(maxWidth: .infinity, minHeight: 50)
                 .background(Color.green)
                 .cornerRadius(10)
-                .shadow(radius: 5) // Add a subtle shadow for better depth
+                .shadow(radius: 5)
                 .padding(.horizontal)
         }
     }
     
-    // Initialize workout log with empty values
     private func initializeWorkoutLog() {
         workoutLog = exercises.map { exercise in
-            ExerciseLog(exerciseId: exercise.id, sets: [ExerciseSet()]) // Start with one set
+            ExerciseLog(exerciseId: exercise.id, sets: [ExerciseSet()])
         }
     }
     
-    // Save workout log (placeholder)
     private func saveWorkoutLog() {
         print("Workout Log Saved: \(workoutLog)")
     }
 }
 
-// Models
 struct Exercise: Identifiable {
     var id = UUID()
     var name: String
