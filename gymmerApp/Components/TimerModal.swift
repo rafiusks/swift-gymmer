@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
 import UserNotifications
+import Combine // Import Combine to use AnyCancellable
 
 struct TimerModal: View {
     @Binding var isPresented: Bool
@@ -10,9 +11,11 @@ struct TimerModal: View {
     @State private var customMinutes: String = "0"
     @State private var customSeconds: String = "0"
     @State private var showError = false
-    @State private var startTime: Date? = nil // To store the start time
+    @State private var endTime: Date? = nil // To store the end time
+    @State private var stateRestored = false // New state variable
     
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .common)
+    @State private var timerCancellable: AnyCancellable?
     
     var body: some View {
         VStack(spacing: 24) {
@@ -124,19 +127,40 @@ struct TimerModal: View {
         }
         .padding()
         .onAppear {
-            print("On appear")
+            stateRestored = false
             restoreTimerState()
             requestNotificationPermission()
+            timerCancellable = timer.connect() as? AnyCancellable
+        }
+        .onDisappear {
+            timerCancellable?.cancel()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            print("App will enter foreground")
+            stateRestored = false
+            restoreTimerState()
+            stateRestored = false
         }
         .onReceive(timer) { _ in
-            if isTimerRunning && remainingTime > 0 {
-                remainingTime -= 1
-                saveTimerState()
-            } else if remainingTime == 0 && !timerComplete {
-                timerComplete = true
-                isTimerRunning = false
-                playSystemSound()
-                scheduleNotification()
+            guard stateRestored else { return }
+            if isTimerRunning, let endTime = endTime {
+                remainingTime = max(endTime.timeIntervalSince(Date()), 0)
+                
+                if remainingTime <= 0 && !timerComplete && stateRestored{
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        
+                        timerComplete = true
+                        isTimerRunning = false
+                        removeNotification()
+                        saveTimerState()
+                        timerComplete = true
+                        
+                        if stateRestored { playSystemSound() }
+                        
+                        stateRestored = true
+                    }
+
+                }
             }
         }
     }
@@ -151,9 +175,9 @@ struct TimerModal: View {
             timerComplete = false
             isTimerRunning = true
             showError = false
-            startTime = Date() // Set the start time
+            endTime = Date().addingTimeInterval(remainingTime)
             saveTimerState()
-            scheduleNotification() // Schedule the notification when the timer starts
+            scheduleNotification()
         } else {
             showError = true
         }
@@ -166,9 +190,9 @@ struct TimerModal: View {
         isTimerRunning = false
         timerComplete = false
         showError = false
-        startTime = nil // Reset the start time
+        endTime = nil
         saveTimerState()
-        removeNotification() // Remove any scheduled notification
+        removeNotification()
     }
     
     private func timeString(from interval: TimeInterval) -> String {
@@ -183,6 +207,10 @@ struct TimerModal: View {
     
     // Schedule the notification for the remaining time
     private func scheduleNotification() {
+        guard remainingTime > 0 else {
+            print("Not scheduling notification because remainingTime is ≤ 0")
+            return
+        }
         let content = UNMutableNotificationContent()
         content.title = "Workout Timer"
         content.body = "Time's up!"
@@ -219,42 +247,62 @@ struct TimerModal: View {
     // Save the current timer state to UserDefaults
     private func saveTimerState() {
         UserDefaults.standard.set(remainingTime, forKey: "RemainingTime")
-        if let startTime = startTime {
-            UserDefaults.standard.set(startTime, forKey: "StartTime")
+        if let endTime = endTime {
+            UserDefaults.standard.set(endTime, forKey: "EndTime")
         }
+        UserDefaults.standard.set(timerComplete, forKey: "TimerComplete")
+        UserDefaults.standard.set(isTimerRunning, forKey: "IsTimerRunning")
     }
     
     // Restore the timer state when the app returns
     private func restoreTimerState() {
-        let savedRemainingTime = UserDefaults.standard.double(forKey: "RemainingTime")
-        let savedStartTime = UserDefaults.standard.object(forKey: "StartTime") as? Date
+        remainingTime = UserDefaults.standard.double(forKey: "RemainingTime")
+        let savedEndTime = UserDefaults.standard.object(forKey: "EndTime") as? Date
+        timerComplete = UserDefaults.standard.bool(forKey: "TimerComplete")
+        isTimerRunning = UserDefaults.standard.bool(forKey: "IsTimerRunning")
         
-        if let savedStartTime = savedStartTime {
-            let elapsedTime = Date().timeIntervalSince(savedStartTime)
-            
-            remainingTime = max(savedRemainingTime - elapsedTime, 0)
+        if isTimerRunning, let savedEndTime = savedEndTime {
+            let timeLeft = savedEndTime.timeIntervalSince(Date())
+            remainingTime = max(timeLeft, 0)
+            endTime = savedEndTime
             
             if remainingTime > 0 {
                 // Timer is still running
-                isTimerRunning = true
-                startTime = savedStartTime
+                timerComplete = false
+                // Remove existing notification and reschedule
+                removeNotification()
+                scheduleNotification()
             } else {
-                // Timer is completed, but we are returning after it ended
+                // Timer has completed
                 remainingTime = 0
-                timerComplete = true
                 isTimerRunning = false
-                // Do not trigger alarm or notification
+                timerComplete = true
+                endTime = nil
+                removeNotification()
             }
+        } else {
+            // Timer is not running
+            endTime = nil
         }
+        
+        stateRestored = true
     }
     
     private func startTimer() {
-        startTime = Date()
+        if endTime == nil {
+            endTime = Date().addingTimeInterval(remainingTime)
+        }
+        isTimerRunning = true
         saveTimerState()
         scheduleNotification()
     }
     
     private func pauseTimer() {
+        if let endTime = endTime {
+            remainingTime = max(endTime.timeIntervalSince(Date()), 0)
+        }
+        isTimerRunning = false
+        self.endTime = nil
         saveTimerState()
         removeNotification()
     }
