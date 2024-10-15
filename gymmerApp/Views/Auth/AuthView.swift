@@ -46,7 +46,7 @@ struct AuthView: View {
             }) {
                 VStack(alignment: .center) {
                     Text("Currently in development, \n no sign in available.")
-                        .foregroundStyle(Color(UIColor.systemRed))
+                        .foregroundStyle(Color(UIColor.systemGray))
                         .padding(.bottom, 20)
 
                     HStack {
@@ -58,16 +58,7 @@ struct AuthView: View {
                     .padding()
                     .foregroundColor(.white)
                     .background(
-                        LinearGradient(
-                            gradient: Gradient(
-                                colors: [
-                                    AppColors.gradientStart,
-                                    AppColors.gradientEnd,
-                                ]
-                            ),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                        Color(UIColor.systemGreen)
                     )
                     .cornerRadius(25)
                 }
@@ -86,7 +77,6 @@ struct AuthView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.white)  // Apply a plain background to ensure no gradient
         .ignoresSafeArea()
     }
 
